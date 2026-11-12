@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#12263b"><meta name="description" content="Dẫn đường Google Routes trên Chrome Android tới ONE-2.13L V0.8 qua Web Bluetooth">
+<title>ONE Navigation Web • Galaxy A56</title>
+<style>
+:root{color-scheme:light;font-family:system-ui,-apple-system,Segoe UI,Arial,sans-serif;color:#162538;background:#eff3f8}*{box-sizing:border-box}body{margin:0}header{background:#12263b;color:#fff;padding:22px 16px}header>div{max-width:920px;margin:auto}h1{font-size:24px;letter-spacing:-.4px;margin:0 0 4px}h2{font-size:17px;margin:0 0 10px}p{margin:7px 0;color:#526579;line-height:1.5}header p{color:#bbd1e5}main{max-width:920px;margin:auto;padding:16px 12px 50px;display:grid;gap:14px}.panel{background:#fff;border:1px solid #d9e2eb;border-radius:14px;padding:16px;box-shadow:0 2px 8px #1b2e4708}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}.stack{display:grid;gap:9px}.row{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.row>*{flex-shrink:0}label{font-size:13px;font-weight:700;color:#26394e;display:grid;gap:5px}input,select,button{font:inherit;border:1px solid #bbc9d7;border-radius:9px;padding:11px 12px;min-height:43px}input,select{width:100%;color:#17293e;background:#fff}button{background:#eef3fa;color:#213448;cursor:pointer;font-weight:700}button.main{background:#175dc0;border-color:#175dc0;color:#fff}button.dark{background:#173a50;border-color:#173a50;color:#fff}button:disabled{opacity:.48;cursor:not-allowed}button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #7cb5fa;outline-offset:2px}.hint{font-size:12px;color:#62778b}.state{font-size:13px;border-radius:8px;padding:10px 12px;background:#ecf3fc;color:#174a82;white-space:pre-wrap;overflow-wrap:anywhere}.state.warn{background:#fff4da;color:#8f5400}.state.bad{background:#fff0ee;color:#a2261f}.tag{display:inline-block;font-size:11px;border-radius:100px;background:#e6eef8;color:#27558b;padding:5px 9px;font-weight:700}.screenArea{background:#f5f7fa;padding:13px;border-radius:12px;display:flex;justify-content:center}.screen{width:100%;max-width:636px;height:auto;image-rendering:pixelated;border:2px solid #222;background:#fff;aspect-ratio:212/104}#map{height:280px;width:100%;border:1px solid #d9e2eb;border-radius:10px;background:linear-gradient(140deg,#e8f3ed,#edf2f9);position:relative}#map:empty:before{content:'Bản đồ Google sẽ xuất hiện sau khi tải API';font-size:13px;position:absolute;top:46%;left:20px;color:#5f7286}#log{background:#101f30;color:#d3e0ee;border-radius:9px;padding:12px;font-size:12px;max-height:180px;overflow:auto;white-space:pre-wrap;margin:0}details>summary{cursor:pointer;font-weight:700;margin-bottom:10px}.compact{font-size:12px}.smallbtn{font-size:13px}.danger{color:#ac342d;font-weight:700}@media(min-width:780px){main{grid-template-columns:1fr 1fr}.full{grid-column:1/-1}}
+</style>
+</head>
+<body>
+<header><div><h1>ONE Navigation Web <span class="tag">v1.0 • thử nghiệm</span></h1><p>Galaxy A56 → Chrome → Bluetooth → màn E-Ink ONE-2.13L (V0.8)</p></div></header>
+<main>
+<section class="panel stack">
+ <h2>1. Kết nối E-Ink</h2>
+ <div class="row"><button id="connect" class="main">Kết nối Bluetooth</button><button id="disconnect" disabled>Ngắt kết nối</button></div>
+ <div class="grid"><label>Kích thước màn hình<select id="size"><option value="212x104">212 × 104</option><option value="250x122">250 × 122</option></select></label><label>Thời gian tối thiểu giữa 2 lần cập nhật<select id="interval"><option value="12">12 giây</option><option value="20">20 giây</option><option value="30">30 giây</option></select></label></div>
+ <div class="state" id="bleStatus">Chưa kết nối. Đóng nRF Connect và ứng dụng điều khiển E-Ink khác trước khi thực hiện.</div>
+ <p class="hint">Web Bluetooth yêu cầu mở từ HTTPS (ví dụ GitHub Pages), nhấn nút trên trang để cho phép thiết bị. Không cần ghép đôi trước ở Cài đặt Samsung.</p>
+</section>
+<section class="panel stack">
+ <h2>2. Thử hiển thị (không cần Google API)</h2>
+ <div class="grid"><label>Mũi tên<select id="demoDir"><option value="right">Rẽ phải</option><option value="left">Rẽ trái</option><option value="straight">Đi thẳng</option><option value="uturn">Quay đầu</option><option value="roundabout">Vòng xuyến</option></select></label><label>Cự ly<input id="demoDistance" value="150 m" maxlength="18"></label></div>
+ <label>Tên đường<input id="demoRoad" value="Nguyễn Văn Linh" maxlength="70"></label>
+ <div class="row"><button id="preview" class="dark">Xem trước</button><button id="sendDemo" class="main" disabled>Gửi thử E-Ink</button></div>
+ <p class="hint">Thử mục này trước để xác nhận Chrome trên Galaxy A56 truyền ảnh đúng như bản thử Windows.</p>
+</section>
+<section class="panel full stack">
+ <h2>Hiển thị trên E-Ink <span class="tag">Xem trước</span></h2>
+ <div class="screenArea"><canvas id="screen" class="screen" width="212" height="104" aria-label="Hình ảnh sẽ gửi đến màn hình E-Ink"></canvas></div>
+ <div class="state" id="navStatus">Chưa có tuyến đường. Bạn vẫn có thể gửi mũi tên thử ở mục 2.</div>
+</section>
+<section class="panel full stack">
+ <h2>3. Google Maps – tính tuyến</h2>
+ <p class="hint">Đây là trang bản đồ độc lập dùng Google Maps Platform, KHÔNG đọc được dẫn đường từ ứng dụng Google Maps bên ngoài.</p>
+ <label>Google Maps Platform API key (dùng cho trang web của bạn)<input type="password" id="apiKey" autocomplete="off" placeholder="AIza..."></label>
+ <div class="row"><button id="loadMap" class="dark">Tải bản đồ Google</button><button id="locate">Lấy vị trí GPS</button></div>
+ <p class="hint">Cần bật <b>Maps JavaScript API</b> và <b>Routes API</b>, thiết lập thanh toán và hạn chế API key theo tên miền HTTPS của bạn. Khóa chỉ dùng trong phiên hiện tại.</p>
+ <label>Điểm đến (địa chỉ hoặc tọa độ)<input id="destination" placeholder="Ví dụ: Cầu Rồng, Đà Nẵng" autocomplete="street-address"></label>
+ <div class="grid"><label>Phương tiện<select id="travelMode"><option value="TWO_WHEELER">Xe máy (nếu khu vực hỗ trợ)</option><option value="DRIVING">Ô tô</option><option value="WALKING">Đi bộ</option><option value="BICYCLING">Xe đạp</option></select></label><label>Điểm bắt đầu<input id="originText" readonly value="Chưa có GPS"></label></div>
+ <div class="row"><button id="calculate" class="main" disabled>Tính tuyến Google</button><button id="start" disabled>Bắt đầu dẫn đường</button><button id="stop" disabled>Dừng</button><button id="recalculate" disabled>Tính lại tuyến</button></div>
+ <div class="state" id="mapStatus">Tải Google Maps bằng API key, sau đó cấp quyền vị trí và chọn điểm đến. Bạn cũng có thể chạm vào bản đồ để lấy tọa độ đích.</div>
+ <div id="map" aria-label="Bản đồ Google và tuyến đường"></div>
+ <p class="hint">Luôn giữ Chrome ở màn hình trước và màn hình điện thoại sáng. Chrome không bảo đảm cập nhật GPS/Bluetooth khi khóa màn hình hoặc chuyển sang Google Maps.</p>
+</section>
+<section class="panel full">
+ <details><summary>Nhật ký / kiểm tra lỗi</summary><pre id="log"></pre></details>
+ <p class="hint">Bản thử nghiệm. Không dùng làm phương tiện dẫn đường duy nhất khi đi xe; xem tín hiệu thực tế, biển báo và điều kiện đường sá. Mất GPS, mất BLE hoặc đi lệch tuyến có thể khiến mũi tên không cập nhật.</p>
+</section>
+</main>
+<script src="core.js"></script><script src="app.js"></script>
+</body>
+</html>
